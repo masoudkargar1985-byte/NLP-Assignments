@@ -1,0 +1,73 @@
+name: Train NLP notebooks on real datasets
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/train_real_data.yml'
+permissions:
+  contents: write
+env:
+  NB_OFFLINE_SMOKE: '0'
+  PYTHONUNBUFFERED: '1'
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      matrix:
+        notebook:
+          - 01_stackoverflow_bag_of_embeddings.ipynb
+          - 02_stackoverflow_rnn.ipynb
+          - 03_shahnameh_language_model.ipynb
+          - 04_persian_to_english_translation.ipynb
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: .github/workflows/requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r .github/workflows/requirements.txt
+      - name: Execute notebook on original dataset
+        run: |
+          python -m jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=0 "${{ matrix.notebook }}"
+      - name: Check execution success and real data mode
+        env:
+          NOTEBOOK: ${{ matrix.notebook }}
+        run: |
+          python - <<'PY'
+          import json, os
+          path=os.environ['NOTEBOOK']
+          with open(path,encoding='utf8') as f: nb=json.load(f)
+          cells=[c for c in nb['cells'] if c['cell_type']=='code']
+          assert all(c.get('execution_count') is not None for c in cells), 'Unexecuted code cell'
+          assert not any(out.get('output_type')=='error' for c in cells for out in c.get('outputs',[])), 'Notebook has errors'
+          assert any('REAL DATASET' in str(o) for c in cells for o in c.get('outputs',[])), 'Not executed on real data'
+          print('Validated:',path)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: output-${{ strategy.job-index }}
+          path: ${{ matrix.notebook }}
+          if-no-files-found: error
+  publish:
+    needs: train
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: output-*
+          merge-multiple: true
+      - name: Commit executed notebooks
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- '*.ipynb'
+          git diff --cached --quiet || (git commit -m 'Save real-dataset training outputs' && git push)
