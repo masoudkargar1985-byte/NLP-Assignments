@@ -1,4 +1,4 @@
-name: Train NLP notebooks on real datasets
+name: Train and validate four NLP notebooks (full data)
 on:
   workflow_dispatch:
   push:
