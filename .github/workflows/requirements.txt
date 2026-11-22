@@ -6,3 +6,8 @@ ipykernel>=6.29,<7
 jupyter-core>=5.7,<7
 datasets>=3.0,<5
 torch>=2.2,<3
+
+transformers>=4.44,<5
+sentencepiece>=0.2,<1
+sacrebleu>=2.4,<3
+protobuf>=4,<7
