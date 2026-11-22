@@ -32,3 +32,13 @@ The Stack Overflow notebooks preserve capitalization and code punctuation instea
 A [GitHub Actions workflow](.github/workflows/train_real_data.yml) runs the four notebooks in parallel with `NB_OFFLINE_SMOKE=0` on GitHub-hosted Linux CPU workers. It validates completed notebooks and commits real-data results back to `main` **only if all four jobs succeed**. This is not a Google Colab GPU run. The workflow may fail due to data downloads, execution-time limits, dependencies or hardware resource limits; check the [Actions page](../../actions) before making any result claims.
 
 Current notebook outputs that identify themselves as `OFFLINE SMOKE TEST` are synthetic code checks, not actual dataset training results.
+
+## November 22, 2026 – review and corrections
+
+The original full-data run completed successfully, but its generation quality was limited: the Shahnameh character model produced fragmented Persian, and the from-scratch Persian→English translator produced semantically inaccurate English. The four main assignments were therefore revised:
+
+- Classification notebooks now use validation-based best-checkpoint selection / early stopping, plus learning curves and confusion matrices. They preserve case and programming punctuation.
+- Shahnameh retains the corpus-trained causal Transformer and adds learning curves plus a separately labeled **word-level trigram model trained on the same Shahnameh text** for a qualitative comparison. The trigram output is not Transformer output.
+- Translation retains its original 100,000-pair from-scratch Transformer, adds a comparison against an **externally pretrained mT5 Persian→English translator**, and measures illustrative held-out chrF++. The external model is not claimed as trained from scratch in this project.
+
+**Verification status:** the revised notebooks must be re-executed successfully with the real datasets before the added outputs can be presented as measured results. See the latest [Actions runs](../../actions). The earlier 81.2% / 82.3% classification accuracies belong to the prior full-data run; new best-checkpoint metrics may differ.
