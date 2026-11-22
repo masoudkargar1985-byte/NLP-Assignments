@@ -42,3 +42,7 @@ The original full-data run completed successfully, but its generation quality wa
 - Translation retains its original 100,000-pair from-scratch Transformer, adds a comparison against an **externally pretrained mT5 Persian→English translator**, and measures illustrative held-out chrF++. The external model is not claimed as trained from scratch in this project.
 
 **Verification status:** the revised notebooks must be re-executed successfully with the real datasets before the added outputs can be presented as measured results. See the latest [Actions runs](../../actions). The earlier 81.2% / 82.3% classification accuracies belong to the prior full-data run; new best-checkpoint metrics may differ.
+
+### Formal academic explanation (Persian)
+
+[REPORT_FA.md](REPORT_FA.md) documents the actual baseline results, requirements mapping, overfitting evidence, model-quality failures, and the exact changes applied in the revised notebooks.
