@@ -1,4 +1,4 @@
-name: Train and validate four NLP notebooks (full data)
+name: Revalidate NLP assignments with diagnostics and language baselines
 on:
   workflow_dispatch:
   push:
