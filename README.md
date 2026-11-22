@@ -26,3 +26,9 @@ The Stack Overflow notebooks preserve capitalization and code punctuation instea
 - [Stack Overflow text-classification exercise](https://github.com/Alireza-Akhavan/deeplearning-tensorflow2-notebooks/blob/master/26-text_classification.ipynb)
 - [Language model notebook](https://github.com/Alireza-Akhavan/transformers/blob/main/01_language_model.ipynb)
 - [Shenasa English–Persian parallel dataset](https://huggingface.co/datasets/shenasa/English-Persian-Parallel-Dataset)
+
+## Automated real-data notebook execution
+
+A [GitHub Actions workflow](.github/workflows/train_real_data.yml) runs the four notebooks in parallel with `NB_OFFLINE_SMOKE=0` on GitHub-hosted Linux CPU workers. It validates completed notebooks and commits real-data results back to `main` **only if all four jobs succeed**. This is not a Google Colab GPU run. The workflow may fail due to data downloads, execution-time limits, dependencies or hardware resource limits; check the [Actions page](../../actions) before making any result claims.
+
+Current notebook outputs that identify themselves as `OFFLINE SMOKE TEST` are synthetic code checks, not actual dataset training results.
